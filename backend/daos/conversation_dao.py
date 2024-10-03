@@ -1,5 +1,7 @@
 import logging
 
+from pymongo import MongoClient
+
 logger = logging.getLogger(__name__)
 
 from typing import Annotated, List
@@ -7,17 +9,17 @@ from bson import ObjectId
 from fastapi import Depends
 from pymongo.database import Database
 from pymongo.collection import Collection
-from clients.mongo_client import get_db
+from clients.mongo_client import get_mongo_client
 from models.models import ChatMessage, Conversation
 
 class ConversationDAO:
-    def __init__(self, db: Annotated[Database, Depends(get_db)]):
-        self.db = db
+    def __init__(self, client: Annotated[MongoClient, Depends(get_mongo_client)]):
+        self.db = client.get_database("chat-bot")
         self.collection: Collection = self.db['conversations']
         logger.debug(f"Connected to conversation collection")
 
     def create_conversation(self, conversation: Conversation) -> str:
-        result = self.collection.insert_one(conversation.model_dump())
+        result = self.collection.insert_one(conversation.model_dump(by_alias=True))
         return str(result.inserted_id)
     
     def get_conversation_by_user_id(self, user_id: str, skip: int = 0, limit: int = 10) -> List[Conversation]:

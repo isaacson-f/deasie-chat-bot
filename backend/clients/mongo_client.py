@@ -8,7 +8,7 @@ load_dotenv()
 logger = logging.getLogger(__name__)
 
 
-async def get_db():
+async def get_mongo_client():
     CONNECTION_STRING = os.environ.get("MONGO_CONNECTION_STRING")
     client = MongoClient(CONNECTION_STRING)
     logger.info("Connected to mongo")

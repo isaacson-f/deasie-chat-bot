@@ -21,6 +21,6 @@ class Conversation(BaseModel):
     return self
 
 class User(BaseModel):
-  user_id: str
-  conversations: List[Conversation]
+  user_id: str = Field(alias="_id")
+  conversations: Optional[List[Conversation]] = Field(default=[], description="The conversations of the user")
 

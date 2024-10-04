@@ -18,7 +18,6 @@ interface ChatProps {
 const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
 
   const { sendMessage, readyState, lastMessage } = useWebSocket(`ws://127.0.0.1:8000/api/chat/${userId}/conversation/${conversationId}`);
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [currentBotMessage, setCurrentBotMessage] = useState('');
@@ -52,7 +51,6 @@ const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
         setCurrentBotMessage('');
       }
       else {
-        console.log(messageData);
           // Append the new chunk to the current bot message
           setMessages(prevMessages => {
             const updatedMessages = [...prevMessages];
@@ -86,31 +84,26 @@ const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
     }
   };
 
-  const LoadingIndicator = () => (
-    <div className={styles.loadingIndicator}>
-      <div className={styles.dot}></div>
-      <div className={styles.dot}></div>
-      <div className={styles.dot}></div>
-    </div>
-  );
-
   return (
     <div className={styles.chat}>
       <div className={styles.messageList}>
-        {messages.map((message, index) => (
+        {messages.map(message => (
           <div
             key={message.id}
             className={`${styles.message} ${message.sender === 'user' ? styles.userMessage : styles.botMessage}`}
           >
-            {index === 0 && loading ? (
-              <LoadingIndicator />
-            ) : message.isHtml ? (
+            {message.isHtml ? (
               <div dangerouslySetInnerHTML={{ __html: message.content }} />
             ) : (
               message.content
             )}
           </div>
         ))}
+        {currentBotMessage && (
+          <div className={`${styles.message} ${styles.botMessage}`}>
+            <div dangerouslySetInnerHTML={{ __html: currentBotMessage }} />
+          </div>
+        )}
       </div>
       <div className={styles.inputFormContainer}>
         <form className={styles.inputForm} onSubmit={handleSubmit}>

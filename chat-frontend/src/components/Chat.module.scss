@@ -50,7 +50,7 @@
   .userMessage {
     align-self: flex-end;
     background-color: var(--user-message-color);
-    color: var(--text-color);  // Changed from var(--text-color) to #081f1d
+    color: var(--text-color);
     border-color: var(--deasie-color);
     border-width: 1px;
     border-style: solid;
@@ -94,7 +94,6 @@
     border: none;
     cursor: pointer;
     transition: color 0.3s ease;
-  
     &:hover {
       color: var(--user-message-color);
     }

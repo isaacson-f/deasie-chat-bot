@@ -7,7 +7,7 @@ function App() {
   return (
     <div className={styles.app}>
       <div className={styles.header}>
-        test
+        ChatGeneric
       </div>
       <div className={styles.body}>
         {(() => {
@@ -22,24 +22,17 @@ function App() {
           };
 
           let userId = getCookie('user_id');
-          let conversationId = getCookie('conversation_id');
-
           if (!userId) {
             userId = generateHash();
             document.cookie = `user_id=${userId}; path=/; max-age=31536000`;
           }
-
-          if (!conversationId) {
-            conversationId = generateHash();
-            document.cookie = `conversation_id=${conversationId}; path=/; max-age=31536000`;
-          }
           return (
             <>
               <div className={styles.sidebar}>
-                <Sidebar />
+                <Sidebar userId={userId.toString()}/>
               </div>
               <div className={styles.chat}>
-                <Chat userId={userId.toString()} conversationId={conversationId.toString()} />
+                <Chat userId={userId.toString()} />
               </div>
             </>
           );

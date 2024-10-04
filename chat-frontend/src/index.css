@@ -1,9 +1,12 @@
 :root {
-  --primary-color: #007bff;
-  --secondary-color: #6c757d;
-  --background-color: #f8f9fa;
-  --text-color: #333;
-  --border-radius: 8px;
+  --primary-color: #1a1a1a;
+  --deasie-color: #35e6bd;
+  --secondary-color: #2a2a2a;
+  --background-color: #121212;
+  --text-color: #e0e0e0;
+  --user-message-color: #081f1d;
+  --bot-message-color: #333333;
+  --border-radius: 20px;
   --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;

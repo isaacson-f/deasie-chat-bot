@@ -1,8 +1,9 @@
 .sidebar {
-  background-color: #f0f0f0;
+  background-color: var(--primary-color);
   padding: 20px;
   overflow-y: auto;
-
+  color: var(--text-color);
+  height: calc(100% - 40px);
   h2 {
     margin-bottom: 20px;
   }
@@ -19,9 +20,9 @@
   align-items: center;
   padding: 10px;
   margin-bottom: 10px;
-  background-color: white;
+  background-color: var(--secondary-color);
   border-radius: var(--border-radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 .25px .5px var(--primary-color);
 }
 
 .removeButton {
@@ -29,9 +30,9 @@
   border: none;
   font-size: 18px;
   cursor: pointer;
-  color: var(--secondary-color);
+  color: var(--text-color);
 
   &:hover {
-    color: var(--primary-color);
+    color: var(--user-message-color);
   }
 }

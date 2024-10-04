@@ -29,7 +29,7 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
   });
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const currentBotMessage = useRef('test');
+  const currentBotMessage = useRef('');
   const [loading, setLoading] = useState(false);
   const [chatFlow, setChatFlow] = useState(false);
 

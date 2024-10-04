@@ -6,19 +6,20 @@ interface Conversation {
   title: string;
 }
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<Conversation[]> = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
 
   useEffect(() => {
     // Dummy data for past conversations
     const dummyConversations: Conversation[] = [
-      { id: '1', title: 'React Hooks' },
-      { id: '2', title: 'TypeScript Basics' },
-      { id: '3', title: 'CSS Modules' },
+      { id: '1', title: 'React Hooks Discussion' },
+      { id: '2', title: 'State Management Techniques' },
+      { id: '3', title: 'CSS-in-JS vs. Traditional CSS' },
+      { id: '4', title: 'Performance Optimization in React' },
+      { id: '5', title: 'TypeScript Best Practices' }
     ];
     setConversations(dummyConversations);
   }, []);
-
   const removeConversation = (id: string) => {
     setConversations(conversations.filter(conv => conv.id !== id));
   };

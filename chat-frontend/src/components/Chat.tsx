@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import styles from './Chat.module.scss';
 import Markdown from 'react-markdown';
 import { getMessages } from '../clients/chatClient';
@@ -12,12 +12,11 @@ interface Message {
 
 interface ChatProps {
   userId: string;
-  conversationId: string;
 }
 
-const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
+const Chat: React.FC<ChatProps> = ({userId}) => {
 
-  const { sendMessage, readyState, lastMessage } = useWebSocket(`ws://127.0.0.1:8000/api/chat/${userId}`, {
+  const { sendMessage, lastMessage } = useWebSocket(`ws://127.0.0.1:8000/api/chat/${userId}`, {
     onOpen: () => {
       console.log('WebSocket connection opened.');
     },
@@ -31,7 +30,6 @@ const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const currentBotMessage = useRef('test');
-  const [botMessage, setBotMessage] = useState('beginning');
   const [loading, setLoading] = useState(false);
 
   const updateMessages = useCallback(async(message: MessageEvent) => {
@@ -45,21 +43,17 @@ const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
         sender: 'bot',
       }, ...prevMessages]);
       currentBotMessage.current = '';
-      setBotMessage('');
     } else if (messageData === '######END######') {
       // Finalize the bot message and add it to the messages list
       setLoading(false);
-      setBotMessage('');
       currentBotMessage.current = '';
     }
     else {
-      console.log(messages.map(message => message.sender));
         // Append the new chunk to the current bot message
         currentBotMessage.current = messageData;
         if (messages[0].sender === 'bot') {
           messages[0].content = currentBotMessage.current;
         }
-        setBotMessage(currentBotMessage.current);
     }
   }, [lastMessage]);
 
@@ -85,7 +79,7 @@ const Chat: React.FC<ChatProps> = ({userId, conversationId}) => {
             key={message.id}
             className={`${styles.message} ${message.sender === 'user' ? styles.userMessage : styles.botMessage}`}
           >
-            <Markdown>{message.content}</Markdown>
+            <Markdown className={styles.markdownContainer}>{message.content}</Markdown>
           </div>
         ))}
       </div>

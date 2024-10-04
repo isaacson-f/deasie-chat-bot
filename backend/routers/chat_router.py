@@ -31,9 +31,7 @@ async def get_cookie_or_token(
 async def websocket(websocket: WebSocket, 
                     chat_service: Annotated[ChatService, Depends(ChatService)], 
                     user_service: Annotated[UserService, Depends(UserService)],
-                    user_id: Annotated[str, Path()],
-                    conversation_id: Annotated[str, Path()]):
-    
+                    user_id: Annotated[str, Path()]):
     cur_user = await user_service.get_user(user_id)
     if cur_user == None:
         logger.info(f"User {user_id} not found, creating...")

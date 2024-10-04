@@ -1,0 +1,44 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.body {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+}
+
+.header {
+  background-color: #282c34;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.chat {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.sidebar {
+  flex: 0.25;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

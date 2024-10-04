@@ -1,6 +1,6 @@
 import logging
 import os
-from typing import Annotated, AsyncGenerator, Dict, Generator, List
+from typing import Annotated, AsyncGenerator, Dict, Generator, List, Optional
 from fastapi import Depends, HTTPException
 from openai import AsyncOpenAI, OpenAI, RateLimitError, InternalServerError, BadRequestError
 from clients.chat_client import get_openai_client
@@ -61,8 +61,10 @@ class ChatService:
     except BadRequestError as e:
       logger.error(f"Error in chat: {e}")
       raise BadRequestError(f"Bad request")
+    
+  def get_conversation_by_id(self, conversation_id: str) -> Optional[Conversation]:
+    return self.conversation_dao.get_conversation(conversation_id)
   
-  #TODO: Error handling if user doesn't exist
   def create_conversation(self, user_id: str) -> Conversation:
     conversation = Conversation(user_id=user_id)
     user = self.user_dao.get_user(user_id)
@@ -77,9 +79,10 @@ class ChatService:
     if user_id not in self.user_cache:
       logger.info(f"User {user_id} not found in cache, getting from database...")
       conversations = self.conversation_dao.get_conversations_by_user_id(user_id, skip, limit)
-      if len(conversations) == 0:
+      if conversations is None or len(conversations) == 0:
         raise UserNotFoundError(f"No conversations for user {user_id} found in cache or database")
       self.user_cache[user_id] = conversations
+      return conversations
     else:
       return self.user_cache[user_id]
 
@@ -87,11 +90,11 @@ class ChatService:
     if self.user_cache.get(user_id,-1) == -1:
       logger.info(f"User {user_id} not found in cache, getting from database...")
       conversations: List[Conversation] = self.conversation_dao.get_conversations_by_user_id(user_id)
-      if len(conversations) == 0:
+      if conversations is None or len(conversations) == 0:
         raise UserNotFoundError(f"No conversations for user {user_id} found in cache or database")
       return conversations[0]
     else:
-      if len(self.user_cache[user_id]) == 0:
+      if len(self.user_cache.get(user_id,[])) == 0:
         return self.user_cache[user_id][0]
       logger.info(f"No conversations for user {user_id} found in cache or database")
       return None

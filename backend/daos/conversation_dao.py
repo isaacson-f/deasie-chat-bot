@@ -27,9 +27,9 @@ class ConversationDAO:
     
     def get_conversations_by_user_id(self, user_id: str, skip: int = 0, limit: int = 10) -> List[Conversation]:
         try:
-            logger.info(f"Getting conversations for user {user_id}")
             conversation_cursor = self.collection.find({"_id": {"$regex": f"^{user_id}-"}}).skip(skip).limit(limit)
-            return [Conversation(**data, user_id=user_id) for data in conversation_cursor]
+            conversations = [Conversation(**data, user_id=user_id) for data in conversation_cursor]
+            return conversations
         except PyMongoError as e:
             logger.error(f"Failed to get conversations for user {user_id}: {e}")
             raise DatabaseError(f"Failed to get conversations for user {user_id}")

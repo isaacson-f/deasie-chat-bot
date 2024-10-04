@@ -31,10 +31,12 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
   const [input, setInput] = useState('');
   const currentBotMessage = useRef('test');
   const [loading, setLoading] = useState(false);
+  const [chatFlow, setChatFlow] = useState(false);
 
   const updateMessages = useCallback(async(message: MessageEvent) => {
     const messageData = message.data;
     if (messageData === '######START######') {
+      setChatFlow(true);
       setLoading(true);
       // Start a new bot message
       setMessages(prevMessages => [{
@@ -47,8 +49,9 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
       // Finalize the bot message and add it to the messages list
       setLoading(false);
       currentBotMessage.current = '';
+      setChatFlow(false);
     }
-    else {
+    else if (chatFlow) {
         // Append the new chunk to the current bot message
         currentBotMessage.current = messageData;
         if (messages[0].sender === 'bot') {

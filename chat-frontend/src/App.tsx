@@ -22,10 +22,6 @@ function App() {
           };
 
           let userId = getCookie('user_id');
-          let conversations = [{
-            id: '1',
-            title: 'React Hooks'
-          }];
           if (!userId) {
             userId = generateHash();
             document.cookie = `user_id=${userId}; path=/; max-age=31536000`;
@@ -33,7 +29,7 @@ function App() {
           return (
             <>
               <div className={styles.sidebar}>
-                <Sidebar {...conversations}/>
+                <Sidebar userId={userId.toString()}/>
               </div>
               <div className={styles.chat}>
                 <Chat userId={userId.toString()} />

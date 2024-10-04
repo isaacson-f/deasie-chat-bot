@@ -9,7 +9,7 @@ class ChatMessage(BaseModel):
   content: str
 
 class Conversation(BaseModel):
-  user_id: str = Field(exclude=True, description="The ID of the user")
+  user_id: Optional[str] = Field(exclude=True, description="The ID of the user")
   # The ID of the conversation; setting the alias to _id allows the field to be used as the MongoDB _id field
   conversation_id: Optional[str] = Field(default=None, description="The ID of the conversation", alias="_id")
   messages: Optional[List[ChatMessage]] = Field(default=[], description="The messages in the conversation")
@@ -19,6 +19,10 @@ class Conversation(BaseModel):
   def validate_conversation_id(self) -> str:
     if not self.conversation_id:
       self.conversation_id = f"{self.user_id}-{str(uuid.uuid4())}"
+    if not self.user_id:
+      self.user_id = self.conversation_id.split("-")[0]
+    if not self.conversation_id and not self.user_id:
+      raise ValueError("conversation_id or user_id must be set")
     return self
 
 class User(BaseModel):

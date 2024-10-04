@@ -15,8 +15,8 @@ async def get_openai_client():
     try:
         yield gpt_client
     finally:
-        gpt_client.close()
-        logger.info("Disconnected from the gpt client")
+        await gpt_client.close()
+        logger.info("Disconnected from the OpenAI client")
 
 
 

@@ -4,6 +4,8 @@
     flex-direction: column;
     min-width: 0;  
     padding: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
   }
   
 
@@ -13,20 +15,23 @@
     margin-bottom: 20px;
     display: flex;
     flex-direction: column-reverse;
+
   }
   
   .message {
-    max-width: 70%;
-    padding: 10px;
+    max-width: 60%;
     margin-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
     border-radius: var(--border-radius);
+    height: fit-content;
+    min-height: fit-content;
   }
   
   .userMessage {
     align-self: flex-end;
     background-color: var(--primary-color);
     color: white;
-    margin-left: auto;
   }
   
   .botMessage {

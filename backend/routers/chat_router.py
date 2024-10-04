@@ -3,7 +3,7 @@ from typing import Annotated, List
 from fastapi import APIRouter, BackgroundTasks, Cookie, Depends, FastAPI, Path, Query, WebSocket, WebSocketException, status
 from fastapi.websockets import WebSocketState
 
-from models.models import Conversation, User
+from models.models import ChatMessage, Conversation, User
 from services.chat_service import ChatService
 from services.user_service import UserService
 
@@ -27,15 +27,13 @@ async def get_cookie_or_token(
     return session or token
 
 
-@router.websocket("/{user_id}/conversation/{conversation_id}")
+@router.websocket("/{user_id}")
 async def websocket(websocket: WebSocket, 
                     chat_service: Annotated[ChatService, Depends(ChatService)], 
                     user_service: Annotated[UserService, Depends(UserService)],
                     user_id: Annotated[str, Path()],
-                    conversation_id: Annotated[str, Path()]
-                    ):
-    logger.info(f"User ID: {user_id}")
-    logger.info(f"Conversation ID: {conversation_id}")
+                    conversation_id: Annotated[str, Path()]):
+    
     cur_user = await user_service.get_user(user_id)
     if cur_user == None:
         logger.info(f"User {user_id} not found, creating...")
@@ -43,26 +41,23 @@ async def websocket(websocket: WebSocket,
         cur_user = await user_service.create_user(user)
 
     # Check if conversation exists, if not create it
-    conversation = chat_service.get_conversation(conversation_id)
+    conversation = chat_service.get_recent_conversation_by_user(user_id)
     if not conversation:
         conversation = chat_service.create_conversation(user_id)
     
     await websocket.accept()
-    logger.info(f"WebSocket state: {str(websocket.state)}")
     while True:
         # Check if user exists, if not create it
         data = await websocket.receive_text()
         logger.info(f"Received data: {data}")
         chats = chat_service.chat(data, conversation_history=conversation.messages)
-        await websocket.send_text("######START######")
-        counter = 0
         full_message = ""
-        for chat in chats:
+        chunks = []
+        await websocket.send_text("######START######")
+        async for chat in chats:
+            await websocket.send_text(chat)
             full_message += chat
-            if counter % 10 == 0:
-                await websocket.send_text(full_message)
-                full_message = ""
-            counter += 1
-        await websocket.send_text(full_message)
+        conversation.messages.append(ChatMessage(role="user", content=data))
+        conversation.messages.append(ChatMessage(role="bot", content=full_message))
         await websocket.send_text("######END######")
         

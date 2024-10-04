@@ -22,7 +22,7 @@ class ConversationDAO:
         result = self.collection.insert_one(conversation.model_dump(by_alias=True))
         return str(result.inserted_id)
     
-    def get_conversation_by_user_id(self, user_id: str, skip: int = 0, limit: int = 10) -> List[Conversation]:
+    def get_conversations_by_user_id(self, user_id: str, skip: int = 0, limit: int = 10) -> List[Conversation]:
         conversation_cursor = self.collection.find({"_id": {"$regex": f"^{user_id}-"}}).skip(skip).limit(limit)
         conversations = []
         for data in conversation_cursor:

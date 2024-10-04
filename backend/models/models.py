@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field, model_validator
 
 
 class ChatMessage(BaseModel):
+  role: Optional[str] = Field(default="user", description="The role of the message")
   message_id: Optional[str] = Field(default=str(uuid.uuid4()), description="The ID of the message")
   content: str
 

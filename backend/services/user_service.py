@@ -28,6 +28,7 @@ class UserService:
         return self.user_dao.list_users(skip, limit)
 
     async def add_conversation_to_user(self, user_id: str, conversation_id: str) -> bool:
+
         return self.user_dao.add_conversation_to_user(user_id, conversation_id)
 
     async def remove_conversation_from_user(self, user_id: str, conversation_id: str) -> bool:

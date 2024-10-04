@@ -32,12 +32,20 @@ async def websocket(websocket: WebSocket,
                     chat_service: Annotated[ChatService, Depends(ChatService)], 
                     user_service: Annotated[UserService, Depends(UserService)],
                     user_id: Annotated[str, Path()]):
+<<<<<<< HEAD
     try:
         cur_user = user_service.get_user(user_id)
         if cur_user == None:
             logger.info(f"User {user_id} not found, creating...")
             user = User(_id=user_id)
             cur_user = await user_service.create_user(user)
+=======
+    cur_user = await user_service.get_user(user_id)
+    if cur_user == None:
+        logger.info(f"User {user_id} not found, creating...")
+        user = User(_id=user_id)
+        cur_user = await user_service.create_user(user)
+>>>>>>> be71eb5abe78f5e3d463eee7f4c5ca6692a1b2ce
 
         # Check if conversation exists, if not create it
         conversation = chat_service.get_recent_conversation_by_user(user_id)

@@ -43,62 +43,43 @@ class ConversationDAO:
             logger.error(f"Failed to get conversation {conversation_id}: {e}")
             raise DatabaseError(f"Failed to get conversation {conversation_id}")
 
-    def update_conversation(self, conversation_id: str, messages: List[ChatMessage]) -> Optional[Conversation]:
+    def update_conversation(self, conversation_id: str, messages: List[ChatMessage]) -> bool:
         try:
             logger.info(f"Updating conversation {conversation_id}")
             result = self.collection.update_one(
                 {"_id": conversation_id},
                 {"$set": {"messages": [message.model_dump(by_alias=True) for message in messages]}}
             )
-            if result.matched_count == 0:
-                return None
-            convo = Conversation.model_validate(result.raw_result)
-            return convo        
+            return result.matched_count > 0   
         except PyMongoError as e:
             logger.error(f"Failed to update conversation {conversation_id}: {e}")
             raise DatabaseError(f"Failed to update conversation {conversation_id}")
 
-    def add_message_to_conversation(self, conversation_id: str, message: ChatMessage) -> Optional[Conversation]:
+    def add_message_to_conversation(self, conversation_id: str, message: ChatMessage) -> bool:
         try:
             logger.info(f"Adding message to conversation {conversation_id}")
             result = self.collection.update_one(
                 {"_id": conversation_id},
                 {"$push": {"messages": message.model_dump(by_alias=True)}}
             )
-            if result.matched_count == 0:
-                return None
-            convo = Conversation.model_validate(result.raw_result)
-            return convo
+
+            return result.matched_count > 0
         except PyMongoError as e:
             logger.error(f"Failed to add message to conversation {conversation_id}: {e}")
             raise DatabaseError(f"Failed to add message to conversation {conversation_id}")
     
-    def remove_message_from_conversation(self, conversation_id: str, message_id: str) -> Optional[Conversation]:
+    def remove_message_from_conversation(self, conversation_id: str, message_id: str) -> bool:
         try:
             logger.info(f"Removing message {message_id} from conversation {conversation_id}")
             result = self.collection.update_one(
                 {"_id": conversation_id},
                 {"$pull": {"messages": {"_id": message_id}}}
             )
-            if result.matched_count == 0:
-                return None
-            convo = Conversation.model_validate(result.raw_result)
-            return convo        
+            return result.matched_count > 0   
         except PyMongoError as e:
             logger.error(f"Failed to remove message {message_id} from conversation {conversation_id}: {e}")
             raise DatabaseError(f"Failed to remove message from conversation {conversation_id}")
 
-    def delete_conversation(self, conversation_id: str) -> Optional[Conversation]:
-        try:
-            logger.info(f"Deleting conversation {conversation_id}")
-            result = self.collection.delete_one({"_id": conversation_id})
-            if result.matched_count == 0:
-                return None
-            convo = Conversation.model_validate(result.raw_result)
-            return convo        
-        except PyMongoError as e:
-            logger.error(f"Failed to delete conversation {conversation_id}: {e}")
-            raise DatabaseError(f"Failed to delete conversation {conversation_id}")
 
     def list_conversations(self, skip: int = 0, limit: int = 10) -> List[Conversation]:
         try:

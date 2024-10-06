@@ -41,9 +41,9 @@ This is the backend for a chat bot application built with FastAPI and MongoDB. A
 
 ## Running the Application
 
-To run the application in development mode with auto-reload and the provided logging configuration (located in `./config/logging.yaml`):
+To run the application in development mode with auto-reload and the provided logging configuration (located in `./config/log_config.yaml`):
 ```
-uvicorn main:app --log-config ./config/logging.yaml --reload
+uvicorn main:app --log-config ./config/log_config.yaml --reload
 ```
 
 ## Websocket Endpoint

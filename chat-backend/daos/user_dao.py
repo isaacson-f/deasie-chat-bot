@@ -34,16 +34,13 @@ class UserDAO:
             logger.error(f"Failed to get user {user_id}: {e}")
             raise DatabaseError(f"Failed to get user {user_id}")
 
-    def update_user(self, user_id: str, user: User) -> Optional[User]:
+    def update_user(self, user_id: str, user: User) -> bool:
         try:
             result = self.collection.update_one(
                 {"_id": user_id},
                 {"$set": user.model_dump()}
             )
-            if result.matched_count == 0:
-                return None
-            new_user = User.model_validate(result.raw_result)
-            return new_user
+            return result.matched_count > 0   
         except PyMongoError as e:
             logger.error(f"Failed to update user {user_id}: {e}")
             raise DatabaseError(f"Failed to update user {user_id}")
@@ -64,31 +61,26 @@ class UserDAO:
             logger.error(f"Failed to list users: {e}")
             raise DatabaseError("Failed to list users")
 
-    def add_conversation_to_user(self, user_id: str, conversation_id: str) -> Optional[User]:
+    def add_conversation_to_user(self, user_id: str, conversation_id: str) -> bool:
         try:
             result = self.collection.update_one(
                 {"user_id": user_id},
                 {"$push": {"conversations": conversation_id}}
             )
-            if result.matched_count == 0:
-                return None
-            new_user = User.model_validate(result.raw_result)
-            return new_user
+            return result.matched_count > 0   
         
         except PyMongoError as e:
             logger.error(f"Failed to add conversation {conversation_id} to user {user_id}: {e}")
             raise DatabaseError(f"Failed to add conversation to user {user_id}")
 
-    def remove_conversation_from_user(self, user_id: str, conversation_id: str) -> Optional[User]:
+    def remove_conversation_from_user(self, user_id: str, conversation_id: str) -> bool:
         try:
             result = self.collection.update_one(
                 {"user_id": user_id},
                 {"$pull": {"conversations": conversation_id}}
             )
-            if result.matched_count == 0:
-                return None
-            new_user = User.model_validate(result.raw_result)
-            return new_user
+            return result.matched_count > 0   
+
         except PyMongoError as e:
             logger.error(f"Failed to remove conversation {conversation_id} from user {user_id}: {e}")
             raise DatabaseError(f"Failed to remove conversation from user {user_id}")

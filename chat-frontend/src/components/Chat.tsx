@@ -37,7 +37,6 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
     const messageData = message.data;
     if (messageData === '######START######') {
       setChatFlow(true);
-      setLoading(true);
       // Start a new bot message
       setMessages(prevMessages => [{
         id: Date.now().toString(),
@@ -47,7 +46,6 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
       currentBotMessage.current = '';
     } else if (messageData === '######END######') {
       // Finalize the bot message and add it to the messages list
-      setLoading(false);
       currentBotMessage.current = '';
       setChatFlow(false);
     }
@@ -94,7 +92,6 @@ const Chat: React.FC<ChatProps> = ({userId}) => {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Type your message..."
             className={styles.input}
-            disabled={loading}
           />
           <button type="submit" className={styles.sendButton}>Send</button>
         </form>
